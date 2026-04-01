@@ -172,9 +172,10 @@ def get_groups_above_cutoff(cutoff, cache_file):
     cache = load_json(cache_file)
     count_dict = {}
     results = {}
+    
     for breed_id in cache:
-        data = cache[breed_id]['data']
         try:
+            data = cache[breed_id]['data']
             id = data['relationships']['group']['data']['id']
         except:
             continue
@@ -186,9 +187,6 @@ def get_groups_above_cutoff(cutoff, cache_file):
         if count >= cutoff:
             results[id] = count
     return results
-
-
-
 
 
 # Extra Credit
