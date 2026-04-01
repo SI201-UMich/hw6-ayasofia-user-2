@@ -127,7 +127,30 @@ def get_longest_lifespan_breed(cache_file):
         A tuple (breed_name, max_lifespan_integer) for the winning breed, OR the
         string "No breeds found" if no breed in the cache has a life.max value.
     """
-    pass
+    cache = load_json(cache_file)
+    max = -1
+    breed_name = ''
+    for breed_id in cache:
+        data = cache[breed_id]['data']
+        try:
+            life_span = int(data['attributes']['life'].get('max'))
+        except:
+            continue
+        name = data['attributes']['name']
+        if life_span is None:
+            continue
+        if life_span > max:
+            max = life_span
+            breed_name = name
+        elif life_span == max:
+            if name < breed_name:
+                breed_name = name
+    if not breed_name:
+        return "No breeds found"
+    else:
+        return (breed_name, max)
+
+
 
 
 def get_groups_above_cutoff(cutoff, cache_file):
@@ -146,7 +169,26 @@ def get_groups_above_cutoff(cutoff, cache_file):
     RETURNS:
         A dictionary {group_uuid: count} for groups with count >= cutoff only.
     """
-    pass
+    cache = load_json(cache_file)
+    count_dict = {}
+    results = {}
+    for breed_id in cache:
+        data = cache[breed_id]['data']
+        try:
+            id = data['relationships']['group']['data']['id']
+        except:
+            continue
+        if id not in count_dict:
+            count_dict[id] = 1
+        else:
+            count_dict[id] += 1
+    for id, count in count_dict.items():
+        if count >= cutoff:
+            results[id] = count
+    return results
+
+
+
 
 
 # Extra Credit
