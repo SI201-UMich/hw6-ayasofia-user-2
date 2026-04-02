@@ -239,7 +239,8 @@ def recommend_breeds_in_same_group(breed_name, cache_file):
             continue
     if not recommendations:
         return f"No recommendations found based on '{breed_name}'."
-    return sorted(recommendations)
+    recommendations.sort()
+    return recommendations
 
 class TestHomeworkDogAPI(unittest.TestCase):
     def setUp(self):
