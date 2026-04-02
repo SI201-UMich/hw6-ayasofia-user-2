@@ -81,7 +81,7 @@ def search_breed(breed_id):
         parsed_json_dict = response.json()
         if parsed_json_dict.get('data') is not None:
             return (parsed_json_dict, url)
-        return None
+    return None
 
 
 def update_cache(breed_ids, cache_file):
@@ -110,7 +110,7 @@ def update_cache(breed_ids, cache_file):
             if parsed_json_dict.get('data') is not None:
                 cache[url] = parsed_json_dict
                 count += 1
-        create_cache(cache, cache_file)
+            create_cache(cache, cache_file)
     percentage = (count / len(breed_ids)) * 100
     return f'Cached data for {percentage}% of breeds'
 
