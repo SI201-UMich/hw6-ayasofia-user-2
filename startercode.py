@@ -210,7 +210,36 @@ def recommend_breeds_in_same_group(breed_name, cache_file):
             "No group information available for '{breed_name}'."  (no group id)
             "No recommendations found based on '{breed_name}'."  (no other breeds in that group)
     """
-
+    cache = load_json(cache_file)
+    if not cache:
+        return "No breed data found in cache."
+    group_id  = None
+    found_breed = False
+    for breed_id in cache:
+        try:
+            cur_name = cache[breed_id]['data']['attributes']['name']
+            if cur_name.lower() == breed_name.lower():
+                found_breed = True
+                group_id = cache[breed_id]['data']["relationships"]["group"]["data"]["id"]
+                break
+        except:
+            continue
+    if not found_breed:
+        return f"'{breed_name}' is not in the cache."
+    if group_id is None:
+        return f"No group information available for '{breed_name}'."
+    recommendations = []
+    for breed_id in cache:
+        try:
+            cur_name = cache[breed_id]['data']['attributes']['name']
+            curr_id = cache[breed_id]['data']['relationships']['group']['data']['id']
+            if group_id == curr_id and cur_name.lower() != breed_name.lower():
+                recommendations.append(cur_name)
+        except:
+            continue
+    if not recommendations:
+        return f"No recommendations found based on '{breed_name}'."
+    return sorted(recommendations)
 
 class TestHomeworkDogAPI(unittest.TestCase):
     def setUp(self):
@@ -434,7 +463,7 @@ class TestHomeworkDogAPI(unittest.TestCase):
     # -------------------------
     # extra credit - uncomment tests below to evaluate extra credit function
     # -------------------------
-    """
+    
     def test_recommend_breeds_in_same_group_empty_cache(self):
         create_cache({}, self.test_cache_file)
         self.assertEqual(
@@ -539,7 +568,7 @@ class TestHomeworkDogAPI(unittest.TestCase):
             recommend_breeds_in_same_group("breed a", self.test_cache_file),
             ["Breed B", "Breed Z"],
         )
-    """
+    
 
 
 if __name__ == "__main__":
